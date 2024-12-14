@@ -59,6 +59,7 @@ if prompt := st.chat_input("Say Something", key="normal"):
         add_message("assistant", f"You have following tables {st.session_state.table_name}")
         for i,j in st.session_state.columns.items():
             add_message("assistant", f"For table {i} you have following columns {j}")
+        add_message('assistant','You can generate random queries by saying random query')
         st.session_state.setup = "conversation"
     elif st.session_state.setup == "conversation":
         sql_obj = input_process(st.session_state.db_name)

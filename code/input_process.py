@@ -2,6 +2,7 @@ import spacy
 from sqlalchemy.sql import column
 from sqlalchemy import create_engine, MetaData, Table, select, and_, or_, desc, text, inspect
 import pymysql
+import random
 
 class input_process:
 
@@ -59,6 +60,18 @@ class input_process:
 
     def nl_sql(self, query, table, column):
         try:
+            if query.lower() == 'random query':
+                table_match = random.choice(table)
+                column_match = random.choice(column[table_match])
+                with self.engine.connect() as connection:
+                    connection.execute(text(f'USE {self.db_name}'))
+                    connection.commit()
+                sql = f"SELECT {column_match} FROM {table_match}".strip()
+                result = ""
+                with self.engine.connect() as connection:
+                    temp = connection.execute(text(sql))
+                    result = temp.fetchall()
+                return [sql, result]
             for i in range(len(table)):
                 table[i] = table[i].lower()
             query = query.lower().strip()
@@ -191,7 +204,7 @@ class input_process:
                 result = temp.fetchall()
             return [sql, result]
         except Exception as e:
-            return (sql, 'Sorry restructure your query')
+            return ('Error', 'Sorry restructure your query')
 
 
 
